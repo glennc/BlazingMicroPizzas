@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29004.115
 MinimumVisualStudioVersion = 15.0.26124.0
@@ -11,6 +11,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingPizza.ComponentsLibrary", "BlazingPizza.ComponentsLibrary\BlazingPizza.ComponentsLibrary.csproj", "{77601C05-0A91-4895-A1A1-B5F90422DAB8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazingComponents", "BlazingComponents\BlazingComponents.csproj", "{659BA43E-C36D-4F2D-A715-22465BE90792}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingPizza.Orders", "BlazingPizza.Orders\BlazingPizza.Orders.csproj", "{CA1BD033-740D-44A6-839A-6EB0EEC22003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingPizza.Menu", "BlazingPizza.Menu\BlazingPizza.Menu.csproj", "{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +86,30 @@ Global
 		{659BA43E-C36D-4F2D-A715-22465BE90792}.Release|x64.Build.0 = Release|Any CPU
 		{659BA43E-C36D-4F2D-A715-22465BE90792}.Release|x86.ActiveCfg = Release|Any CPU
 		{659BA43E-C36D-4F2D-A715-22465BE90792}.Release|x86.Build.0 = Release|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Release|x64.Build.0 = Release|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA1BD033-740D-44A6-839A-6EB0EEC22003}.Release|x86.Build.0 = Release|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Debug|x64.Build.0 = Debug|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Debug|x86.Build.0 = Debug|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Release|x64.ActiveCfg = Release|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Release|x64.Build.0 = Release|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Release|x86.ActiveCfg = Release|Any CPU
+		{9ED75211-EBB1-4D8B-B6FF-1BA73C2C1D7D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
