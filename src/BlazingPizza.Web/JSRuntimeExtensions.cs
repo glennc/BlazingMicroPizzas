@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
-namespace BlazingPizza.Client
+namespace BlazingPizza.Web
 {
     public static class JSRuntimeExtensions
     {

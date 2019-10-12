@@ -1,4 +1,4 @@
-﻿namespace BlazingPizza.Server
+﻿namespace BlazingPizza.Orders
 {
     public static class SeedData
     {

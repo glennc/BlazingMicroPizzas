@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.VisualBasic;
+using System.Collections.Generic;
 
-namespace BlazingPizza.Client
+namespace BlazingPizza.Web
 {
     public class OrderState
     {

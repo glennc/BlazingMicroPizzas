@@ -1,5 +1,5 @@
 ﻿@page "/myorders"
-@inject HttpClient HttpClient
+@inject IHttpClientFactory HttpClientFactory
 @attribute [Authorize]
 
 <div class="main">
@@ -30,8 +30,13 @@
 </div>
 
 @code {
+    [CascadingParameter] Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
     async Task<List<OrderWithStatus>> LoadOrders()
     {
-        return await HttpClient.GetJsonAsync<List<OrderWithStatus>>("orders");
+        var authState = await AuthenticationStateTask;
+        var client = HttpClientFactory.CreateClient("orders");
+
+        return await client.GetJsonAsync<List<OrderWithStatus>>($"orders/{authState.User.Identity.Name}");
     }
 }

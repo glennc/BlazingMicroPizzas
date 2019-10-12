@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace BlazingPizza.Client
+namespace BlazingPizza.Web
 {
     public class ServerAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly HttpClient _httpClient;
 
-        public ServerAuthenticationStateProvider(HttpClient httpClient)
+        public ServerAuthenticationStateProvider(IHttpClientFactory httpClient)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClient.CreateClient("auth");
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "BlazingPizza.Orders";
+
+message StatusUpdate {
+	string StatusText = 1;
+	int32 Progress = 2;
+}
+
+message StatusRequest {
+	string Id = 1;
+}
+
+service OrderStatus {
+  rpc GetStatus (StatusRequest) returns (stream StatusUpdate);
+}

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-namespace BlazingPizza.Server
+namespace BlazingPizza.Web
 {
     [ApiController]
     public class UserController : Controller
@@ -39,6 +39,18 @@ namespace BlazingPizza.Server
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect("~/");
+        }
+
+        [Authorize]
+        [HttpGet("user/signincompleted")]
+        public IActionResult SignInCompleted()
+        {
+            var userState = GetUser();
+            return Content($@"
+                <script>
+                    window.opener.onLoginPopupFinished({JsonConvert.SerializeObject(userState)});
+                    window.close();
+                </script>", "text/html");
         }
     }
 }

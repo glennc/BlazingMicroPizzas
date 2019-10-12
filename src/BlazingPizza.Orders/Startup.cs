@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace BlazingPizza.Orders
 {
@@ -27,8 +28,8 @@ namespace BlazingPizza.Orders
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<PizzaStoreContext>(options => options.UseSqlite("Data Source=pizza.db"));
-
             services.AddControllers();
+            services.AddGrpc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,12 +43,12 @@ namespace BlazingPizza.Orders
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<OrderStatusService>();
             });
         }
     }

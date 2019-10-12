@@ -1,4 +1,4 @@
-﻿@inject HttpClient HttpClient
+﻿@inject IHttpClientFactory HttpClientFactory
 
 <div class="dialog-title">
     <h2>@Pizza.Special.Name</h2>
@@ -65,7 +65,8 @@
 
     protected async override Task OnInitializedAsync()
     {
-        toppings = await HttpClient.GetJsonAsync<List<Topping>>("toppings");
+        var client = HttpClientFactory.CreateClient("menu");
+        toppings = await client.GetJsonAsync<List<Topping>>("toppings");
     }
 
     void ToppingSelected(ChangeEventArgs e)

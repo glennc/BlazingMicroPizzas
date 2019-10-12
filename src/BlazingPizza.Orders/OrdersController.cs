@@ -10,7 +10,6 @@ namespace BlazingPizza.Orders
 {
     [Route("orders")]
     [ApiController]
-    [Authorize]
     public class OrdersController : Controller
     {
         private readonly PizzaStoreContext _db;
@@ -20,11 +19,11 @@ namespace BlazingPizza.Orders
             _db = db;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<OrderWithStatus>>> GetOrders()
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<List<OrderWithStatus>>> GetOrders(string userId)
         {
             var orders = await _db.Orders
-                .Where(o => o.UserId == GetUserId())
+                .Where(o => o.UserId == userId)
                 .Include(o => o.DeliveryLocation)
                 .Include(o => o.Pizzas).ThenInclude(p => p.Special)
                 .Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
@@ -34,12 +33,13 @@ namespace BlazingPizza.Orders
             return orders.Select(o => OrderWithStatus.FromOrder(o)).ToList();
         }
 
-        [HttpGet("{orderId}")]
-        public async Task<ActionResult<OrderWithStatus>> GetOrderWithStatus(int orderId)
+        [HttpGet("{orderId}/{userId}")]
+        public async Task<ActionResult<OrderWithStatus>> GetOrderWithStatus(int orderId, string userId)
         {
+            //TODO: Prob just remove user from this and ensure unique Ids.
             var order = await _db.Orders
                 .Where(o => o.OrderId == orderId)
-                .Where(o => o.UserId == GetUserId())
+                .Where(o => o.UserId == userId)
                 .Include(o => o.DeliveryLocation)
                 .Include(o => o.Pizzas).ThenInclude(p => p.Special)
                 .Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
@@ -58,7 +58,6 @@ namespace BlazingPizza.Orders
         {
             order.CreatedTime = DateTime.Now;
             order.DeliveryLocation = new LatLong(51.5001, -0.1239);
-            order.UserId = GetUserId();
 
             // Enforce existence of Pizza.SpecialId and Topping.ToppingId
             // in the database - prevent the submitter from making up
@@ -78,12 +77,6 @@ namespace BlazingPizza.Orders
             _db.Orders.Attach(order);
             await _db.SaveChangesAsync();
             return order.OrderId;
-        }
-
-        private string GetUserId()
-        {
-            // This will be the user's twitter username
-            return HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
         }
     }
 }

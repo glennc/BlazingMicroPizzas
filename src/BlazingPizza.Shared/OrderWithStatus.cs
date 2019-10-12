@@ -12,18 +12,24 @@ namespace BlazingPizza
 
         public List<Marker> MapMarkers { get; set; }
 
+        public int Progress { get; set; }
+
         public static OrderWithStatus FromOrder(Order order)
         {
+            if (order == null) return null;
+
             // To simulate a real backend process, we fake status updates based on the amount
             // of time since the order was placed
             string statusText;
             List<Marker> mapMarkers;
             var dispatchTime = order.CreatedTime.AddSeconds(10);
             var deliveryDuration = TimeSpan.FromMinutes(1); // Unrealistic, but more interesting to watch
+            int progress = 0;
 
             if (DateTime.Now < dispatchTime)
             {
                 statusText = "Preparing";
+                progress = 33;
                 mapMarkers = new List<Marker>
                 {
                     ToMapMarker("You", order.DeliveryLocation, showPopup: true)
@@ -32,6 +38,7 @@ namespace BlazingPizza
             else if (DateTime.Now < dispatchTime + deliveryDuration)
             {
                 statusText = "Out for delivery";
+                progress = 66;
 
                 var startPosition = ComputeStartPosition(order);
                 var proportionOfDeliveryCompleted = Math.Min(1, (DateTime.Now - dispatchTime).TotalMilliseconds / deliveryDuration.TotalMilliseconds);
@@ -45,6 +52,7 @@ namespace BlazingPizza
             else
             {
                 statusText = "Delivered";
+                progress = 100;
                 mapMarkers = new List<Marker>
                 {
                     ToMapMarker("Delivery location", order.DeliveryLocation, showPopup: true),
@@ -56,6 +64,7 @@ namespace BlazingPizza
                 Order = order,
                 StatusText = statusText,
                 MapMarkers = mapMarkers,
+                Progress = progress
             };
         }
 

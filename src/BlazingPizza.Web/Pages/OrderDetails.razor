@@ -1,0 +1,92 @@
+﻿@page "/myorders/{orderId:int}"
+@using static BlazingPizza.Orders.OrderStatus
+@using Grpc.Core
+@inject IHttpClientFactory HttpClientFactory
+@inject OrderStatusClient StatusClient
+@attribute [Authorize]
+
+<div class="main">
+    @if (invalidOrder)
+    {
+        <h2>Nope</h2>
+        <p>Sorry, this order could not be loaded.</p>
+    }
+    else if (orderWithStatus == null)
+    {
+        <text>Loading...</text>
+    }
+    else
+    {
+        <div class="track-order">
+            <div class="track-order-title">
+                <h2>
+                    Order placed @orderWithStatus.Order.CreatedTime.ToLongDateString()
+                </h2>
+                <p class="ml-auto mb-0">
+                    Status: <strong>@orderWithStatus.StatusText</strong>
+                </p>
+            </div>
+            <div class="track-order-body">
+                <div class="track-order-details">
+                    <OrderReview Order="orderWithStatus.Order" />
+                </div>
+                <div class="track-order-progress">
+                    <div class="progress" style="height:100%;width:100%">
+                        <div class="progress-bar progress-bar-animated" role="progressbar" style="width: @orderWithStatus.Progress%" aria-valuenow="@orderWithStatus.Progress" aria-valuemin="0" aria-valuemax="100">@orderWithStatus.StatusText</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int OrderId { get; set; }
+    [CascadingParameter] Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    OrderWithStatus orderWithStatus;
+    bool invalidOrder;
+
+    //TODO: Collapse to gRPC?
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthenticationStateTask;
+
+            invalidOrder = false;
+            var client = HttpClientFactory.CreateClient("orders");
+            orderWithStatus = await client.GetJsonAsync<OrderWithStatus>($"orders/{OrderId}/{authState.User.Identity.Name}");
+        }
+        catch (Exception)
+        {
+            invalidOrder = true;
+        }
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _ = GetStatusUpdates();
+        }
+        return Task.CompletedTask;
+    }
+
+    private async Task GetStatusUpdates()
+    {
+        var orderReq = new Orders.StatusRequest() { Id = OrderId.ToString() };
+        await foreach (var statusUpdate in StatusClient.GetStatus(orderReq).ResponseStream.ReadAllAsync())
+        {
+            orderWithStatus.StatusText = statusUpdate.StatusText;
+            orderWithStatus.Progress = statusUpdate.Progress;
+            //TODO: Do I need to InvokeAsync?
+            await InvokeAsync(() =>
+            {
+                StateHasChanged();
+            });
+        }
+    }
+
+}

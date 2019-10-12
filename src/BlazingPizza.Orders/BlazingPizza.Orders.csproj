@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -6,8 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="orderstatus.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
    <ProjectReference Include="..\BlazingPizza.Shared\BlazingPizza.Shared.csproj" />
+   <PackageReference Include="Google.Protobuf" Version="3.9.1" />
+   <PackageReference Include="Grpc.AspNetCore.Server" Version="2.23.2" />
+   <PackageReference Include="Grpc.Tools" Version="2.23.0">
+     <PrivateAssets>all</PrivateAssets>
+     <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+   </PackageReference>
    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="orderstatus.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

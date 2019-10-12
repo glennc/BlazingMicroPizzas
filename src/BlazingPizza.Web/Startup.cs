@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using BlazingPizza.Web.Data;
+using static BlazingPizza.Orders.OrderStatus;
 
 namespace BlazingPizza.Web
 {
@@ -26,14 +31,61 @@ namespace BlazingPizza.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[] { MediaTypeNames.Application.Octet });
+            });
+
+            services.AddScoped<OrderState>();
+
+            services.AddMvc()
+                    .AddNewtonsoftJson();
+
+            services.AddDistributedMemoryCache();
+
+            // Add auth services
+            services
+                  .AddAuthentication(options =>
+                  {
+                      options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                  })
+                  .AddCookie()
+                  .AddTwitter(twitterOptions =>
+                  {
+                      twitterOptions.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
+                      twitterOptions.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
+                  });
+
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddRazorPages();
+
+            services.AddHttpClient("menu", client =>
+            {
+                client.BaseAddress = new Uri("http://localhost:57201");
+            });
+
+            services.AddHttpClient("orders", client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:57203");
+            });
+
+            services.AddHttpClient("auth", client =>
+            {
+                client.BaseAddress = new Uri("http://localhost:64589");
+            });
+
+            services.AddGrpcClient<OrderStatusClient>(c =>
+            {
+                c.Address = new Uri("https://localhost:57203");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseResponseCompression();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -49,9 +101,12 @@ namespace BlazingPizza.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
