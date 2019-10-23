@@ -1,4 +1,4 @@
-﻿@page "/myorders/{orderId:int}"
+﻿@page "/myorders/{orderId:guid}"
 @using static BlazingPizza.Orders.OrderStatus
 @using Grpc.Core
 @inject IHttpClientFactory HttpClientFactory
@@ -31,8 +31,8 @@
                     <OrderReview Order="orderWithStatus.Order" />
                 </div>
                 <div class="track-order-progress">
-                    <div class="progress" style="height:100%;width:100%">
-                        <div class="progress-bar progress-bar-animated" role="progressbar" style="width: @orderWithStatus.Progress%" aria-valuenow="@orderWithStatus.Progress" aria-valuemin="0" aria-valuemax="100">@orderWithStatus.StatusText</div>
+                    <div class="order-progress" style="height:100%;width:100%">
+                        <div class="progress-bar progress-bar-striped" role="progressbar" style="width: @orderWithStatus.Progress%" aria-valuenow="@orderWithStatus.Progress" aria-valuemin="0" aria-valuemax="100">@orderWithStatus.StatusText</div>
                     </div>
                 </div>
             </div>
@@ -42,13 +42,14 @@
 </div>
 
 @code {
-    [Parameter] public int OrderId { get; set; }
+    [Parameter] public Guid OrderId { get; set; }
     [CascadingParameter] Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
     OrderWithStatus orderWithStatus;
     bool invalidOrder;
 
-    //TODO: Collapse to gRPC?
+    //TODO: Collapse to gRPC? This is getting the initial order details as the status update
+    //only does the status string and percentage not all details.
     protected async override Task OnInitializedAsync()
     {
         try

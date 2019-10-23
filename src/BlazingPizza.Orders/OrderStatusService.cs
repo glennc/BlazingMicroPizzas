@@ -8,25 +8,26 @@ namespace BlazingPizza.Orders
 {
     public class OrderStatusService : OrderStatus.OrderStatusBase
     {
-        private PizzaStoreContext _db;
+        private OrdersService _db;
 
-        public OrderStatusService(PizzaStoreContext db)
+        public OrderStatusService(OrdersService db)
         {
             _db = db;
         }
+
         public override async Task GetStatus(StatusRequest request, IServerStreamWriter<StatusUpdate> responseStream, ServerCallContext context)
         {
-            var order = await _db.GetOrderWithStatus(int.Parse(request.Id));
+            var order = await _db.GetOrder(new Guid(request.Id));
             while (!context.CancellationToken.IsCancellationRequested)
             {
-                order = OrderWithStatus.FromOrder(order.Order);
+                var orderStatus = OrderWithStatus.FromOrder(order);
                 await responseStream.WriteAsync(new StatusUpdate()
                 {
-                    StatusText = order.StatusText,
-                    Progress = order.Progress
+                    StatusText = orderStatus.StatusText,
+                    Progress = orderStatus.Progress
                 });
 
-                if (order.StatusText == "Completed")
+                if (orderStatus.StatusText == "Completed")
                 {
                     break;
                 }

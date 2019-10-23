@@ -27,7 +27,7 @@ namespace BlazingPizza.Orders
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PizzaStoreContext>(options => options.UseSqlite("Data Source=pizza.db"));
+            services.AddSingleton<OrdersService>();
             services.AddControllers();
             services.AddGrpc();
         }

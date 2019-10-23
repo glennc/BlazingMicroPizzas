@@ -12,9 +12,9 @@ namespace BlazingPizza.Orders
     [ApiController]
     public class OrdersController : Controller
     {
-        private readonly PizzaStoreContext _db;
+        private readonly OrdersService _db;
 
-        public OrdersController(PizzaStoreContext db)
+        public OrdersController(OrdersService db)
         {
             _db = db;
         }
@@ -22,28 +22,15 @@ namespace BlazingPizza.Orders
         [HttpGet("{userId}")]
         public async Task<ActionResult<List<OrderWithStatus>>> GetOrders(string userId)
         {
-            var orders = await _db.Orders
-                .Where(o => o.UserId == userId)
-                .Include(o => o.DeliveryLocation)
-                .Include(o => o.Pizzas).ThenInclude(p => p.Special)
-                .Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
-                .OrderByDescending(o => o.CreatedTime)
-                .ToListAsync();
+            var orders = await _db.GetOrdersForUser(userId);
 
             return orders.Select(o => OrderWithStatus.FromOrder(o)).ToList();
         }
 
         [HttpGet("{orderId}/{userId}")]
-        public async Task<ActionResult<OrderWithStatus>> GetOrderWithStatus(int orderId, string userId)
+        public async Task<ActionResult<OrderWithStatus>> GetOrderWithStatus(Guid orderId, string userId)
         {
-            //TODO: Prob just remove user from this and ensure unique Ids.
-            var order = await _db.Orders
-                .Where(o => o.OrderId == orderId)
-                .Where(o => o.UserId == userId)
-                .Include(o => o.DeliveryLocation)
-                .Include(o => o.Pizzas).ThenInclude(p => p.Special)
-                .Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
-                .SingleOrDefaultAsync();
+            Order order = await _db.GetOrder(orderId);
 
             if (order == null)
             {
@@ -54,10 +41,12 @@ namespace BlazingPizza.Orders
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> PlaceOrder(Order order)
+        public async Task<ActionResult<Guid>> PlaceOrder(Order order)
         {
-            order.CreatedTime = DateTime.Now;
+            order.CreatedTime = DateTime.UtcNow;
             order.DeliveryLocation = new LatLong(51.5001, -0.1239);
+            //TODO: Should we let MongoDB do this?
+            order.OrderId = Guid.NewGuid();
 
             // Enforce existence of Pizza.SpecialId and Topping.ToppingId
             // in the database - prevent the submitter from making up
@@ -65,7 +54,7 @@ namespace BlazingPizza.Orders
             foreach (var pizza in order.Pizzas)
             {
                 pizza.SpecialId = pizza.Special.Id;
-                pizza.Special = null;
+                pizza.Special = pizza.Special;
 
                 foreach (var topping in pizza.Toppings)
                 {
@@ -74,8 +63,7 @@ namespace BlazingPizza.Orders
                 }
             }
 
-            _db.Orders.Attach(order);
-            await _db.SaveChangesAsync();
+            await _db.SaveOrder(order);
             return order.OrderId;
         }
     }

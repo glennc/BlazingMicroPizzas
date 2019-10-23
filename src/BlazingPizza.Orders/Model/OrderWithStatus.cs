@@ -1,8 +1,10 @@
 ﻿using BlazingPizza.ComponentsLibrary.Map;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace BlazingPizza
+namespace BlazingPizza.Orders
 {
     public class OrderWithStatus
     {
@@ -26,7 +28,7 @@ namespace BlazingPizza
             var deliveryDuration = TimeSpan.FromMinutes(1); // Unrealistic, but more interesting to watch
             int progress = 0;
 
-            if (DateTime.Now < dispatchTime)
+            if (DateTime.UtcNow < dispatchTime)
             {
                 statusText = "Preparing";
                 progress = 33;
@@ -35,7 +37,7 @@ namespace BlazingPizza
                     ToMapMarker("You", order.DeliveryLocation, showPopup: true)
                 };
             }
-            else if (DateTime.Now < dispatchTime + deliveryDuration)
+            else if (DateTime.UtcNow < dispatchTime + deliveryDuration)
             {
                 statusText = "Out for delivery";
                 progress = 66;
@@ -70,7 +72,6 @@ namespace BlazingPizza
 
         private static LatLong ComputeStartPosition(Order order)
         {
-            // Random but deterministic based on order ID
             var rng = new Random();
             var distance = 0.01 + rng.NextDouble() * 0.02;
             var angle = rng.NextDouble() * Math.PI * 2;

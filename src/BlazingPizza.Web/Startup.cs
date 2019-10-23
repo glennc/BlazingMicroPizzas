@@ -62,17 +62,17 @@ namespace BlazingPizza.Web
 
             services.AddHttpClient("menu", client =>
             {
-                client.BaseAddress = new Uri("http://localhost:57201");
+                client.BaseAddress = new Uri(Configuration["Services:Menu"]);
             });
 
             services.AddHttpClient("orders", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:57203");
+                client.BaseAddress = new Uri(Configuration["Services:Orders"]);
             });
 
             services.AddHttpClient("auth", client =>
             {
-                client.BaseAddress = new Uri("http://localhost:64589");
+                client.BaseAddress = new Uri(Configuration["Services:Auth"]);
             });
 
             services.AddGrpcClient<OrderStatusClient>(c =>

@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>Latest</LangVersion>
+    <UserSecretsId>b6d2d0a5-80f4-4776-b962-4eaf5c6cf9cd</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+   <PackageReference Include="MongoDB.Driver" Version="2.9.2" />
    <ProjectReference Include="..\BlazingPizza.Shared\BlazingPizza.Shared.csproj" />
    <PackageReference Include="Google.Protobuf" Version="3.9.1" />
    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.23.2" />
@@ -18,6 +21,7 @@
      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
    </PackageReference>
    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
+   <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
   </ItemGroup>
 
   <ItemGroup>

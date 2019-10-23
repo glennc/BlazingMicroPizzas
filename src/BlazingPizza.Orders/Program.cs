@@ -15,17 +15,6 @@ namespace BlazingPizza.Orders
         public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
-            var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
-            using (var scope = scopeFactory.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<PizzaStoreContext>();
-                if (db.Database.EnsureCreated())
-                {
-                    SeedData.Initialize(db);
-                }
-            }
-
             await host.RunAsync();
         }
 

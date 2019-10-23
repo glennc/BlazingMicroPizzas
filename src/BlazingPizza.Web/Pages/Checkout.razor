@@ -44,7 +44,7 @@
 @code {
         bool isSubmitting;
     [CascadingParameter] Task<AuthenticationState> AuthenticationStateTask { get; set; }
-    [Parameter] public string Id { get; set; }
+    [Parameter] public Guid? Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,8 +56,8 @@
             if (OrderState.Order.Pizzas.Any())
             {
                 var order = System.Text.Encoding.UTF8.GetBytes(JsonSerializer.Serialize(OrderState.Order));
-                Id = Guid.NewGuid().ToString();
-                await Cache.SetAsync(Id, order, new DistributedCacheEntryOptions());
+                Id = Guid.NewGuid();
+                await Cache.SetAsync(Id.ToString(), order, new DistributedCacheEntryOptions());
                 NavigationManager.NavigateTo($"/user/signin?redirectUri=/checkout/{Id}", true);
             }
             else
@@ -69,12 +69,16 @@
         // Try to recover any temporary saved order
         if (!OrderState.Order.Pizzas.Any())
         {
-            if (!string.IsNullOrEmpty(Id))
+            if (Id != null)
             {
-                var order = JsonSerializer.Deserialize<Order>(await Cache.GetAsync(Id));
-                OrderState.ReplaceOrder(order);
-                await Cache.RemoveAsync(Id);
-                Id = null;
+                var previousOrder = await Cache.GetAsync(Id.ToString());
+                if (previousOrder != null)
+                {
+                    var order = JsonSerializer.Deserialize<Order>(previousOrder);
+                    OrderState.ReplaceOrder(order);
+                    await Cache.RemoveAsync(Id.ToString());
+                    Id = null;
+                }
             }
             else
             {
@@ -94,7 +98,7 @@
             OrderState.Order.UserId = authState.User.Identity.Name;
 
             var client = HttpClientFactory.CreateClient("orders");
-            var newOrderId = await client.PostJsonAsync<int>("orders", OrderState.Order);
+            var newOrderId = await client.PostJsonAsync<Guid>("orders", OrderState.Order);
             OrderState.ResetOrder();
             NavigationManager.NavigateTo($"myorders/{newOrderId}");
         }
