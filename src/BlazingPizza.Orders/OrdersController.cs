@@ -19,7 +19,7 @@ namespace BlazingPizza.Orders
             _db = db;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("user/{userId}")]
         public async Task<ActionResult<List<OrderWithStatus>>> GetOrders(string userId)
         {
             var orders = await _db.GetOrdersForUser(userId);
@@ -27,8 +27,8 @@ namespace BlazingPizza.Orders
             return orders.Select(o => OrderWithStatus.FromOrder(o)).ToList();
         }
 
-        [HttpGet("{orderId}/{userId}")]
-        public async Task<ActionResult<OrderWithStatus>> GetOrderWithStatus(Guid orderId, string userId)
+        [HttpGet("{orderId}")]
+        public async Task<ActionResult<OrderWithStatus>> GetOrderWithStatus(Guid orderId)
         {
             Order order = await _db.GetOrder(orderId);
 
@@ -47,22 +47,7 @@ namespace BlazingPizza.Orders
             order.DeliveryLocation = new LatLong(51.5001, -0.1239);
             //TODO: Should we let MongoDB do this?
             order.OrderId = Guid.NewGuid();
-
-            // Enforce existence of Pizza.SpecialId and Topping.ToppingId
-            // in the database - prevent the submitter from making up
-            // new specials and toppings
-            foreach (var pizza in order.Pizzas)
-            {
-                pizza.SpecialId = pizza.Special.Id;
-                pizza.Special = pizza.Special;
-
-                foreach (var topping in pizza.Toppings)
-                {
-                    topping.ToppingId = topping.Topping.Id;
-                    topping.Topping = null;
-                }
-            }
-
+            order.TotalPrice = order.GetFormattedTotalPrice();
             await _db.SaveOrder(order);
             return order.OrderId;
         }

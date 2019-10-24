@@ -11,10 +11,9 @@ services:
       - frontend
       - backend
     ports:
-      - "5000:80"
+      - "64590:80"
     environment:
-#TODO: We need TLS.
-       - "Services:Orders=http://orders"
+       - "Services:Orders=http://orders:5555"
        - "Services:Menu=http://menu"
        - "Services.Auth=http://auth"
 #      - "Authentication:Twitter:ConsumerKey=U9DbAaVcDPYO3RVFlDo4w"
@@ -26,8 +25,15 @@ services:
     networks:
       - backend
     expose:
-      - 80
-      - 443
+      - 5555
+    environment:
+      - "Data:Connection=mongodb://mongo:27017"
+  mongo:
+    image: mongo
+    networks:
+      - backend
+    expose:
+      - 27017
   menu:
     build:
       context: .

@@ -20,8 +20,10 @@ namespace BlazingPizza.Orders
         public Address DeliveryAddress { get; set; } = new Address();
 
         public LatLong DeliveryLocation { get; set; }
-
+        
         public List<Pizza> Pizzas { get; set; } = new List<Pizza>();
+
+        public string TotalPrice { get; internal set; }
 
         public decimal GetTotalPrice() => Pizzas.Sum(p => p.GetTotalPrice());
 

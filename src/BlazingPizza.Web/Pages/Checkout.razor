@@ -1,5 +1,5 @@
 @page "/checkout"
-@page "/checkout/{Id}"
+@page "/checkout/{Id:guid}"
 
 @using Microsoft.Extensions.Caching.Distributed
 @using System.Text.Json
@@ -42,7 +42,7 @@
 </div>
 
 @code {
-        bool isSubmitting;
+    bool isSubmitting;
     [CascadingParameter] Task<AuthenticationState> AuthenticationStateTask { get; set; }
     [Parameter] public Guid? Id { get; set; }
 

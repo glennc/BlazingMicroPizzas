@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -31,6 +33,8 @@ namespace BlazingPizza.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
             services.AddResponseCompression(options =>
             {
                 options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -68,6 +72,7 @@ namespace BlazingPizza.Web
             services.AddHttpClient("orders", client =>
             {
                 client.BaseAddress = new Uri(Configuration["Services:Orders"]);
+                client.DefaultRequestVersion = HttpVersion.Version20;
             });
 
             services.AddHttpClient("auth", client =>
@@ -77,7 +82,7 @@ namespace BlazingPizza.Web
 
             services.AddGrpcClient<OrderStatusClient>(c =>
             {
-                c.Address = new Uri("https://localhost:57203");
+                c.Address = new Uri(Configuration["Services:Orders"]);
             });
         }
 

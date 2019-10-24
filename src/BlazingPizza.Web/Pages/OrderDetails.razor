@@ -58,7 +58,7 @@
 
             invalidOrder = false;
             var client = HttpClientFactory.CreateClient("orders");
-            orderWithStatus = await client.GetJsonAsync<OrderWithStatus>($"orders/{OrderId}/{authState.User.Identity.Name}");
+            orderWithStatus = await client.GetJsonAsync<OrderWithStatus>($"orders/{OrderId}");
         }
         catch (Exception)
         {

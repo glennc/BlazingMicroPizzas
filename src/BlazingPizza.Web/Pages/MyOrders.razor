@@ -37,6 +37,6 @@
         var authState = await AuthenticationStateTask;
         var client = HttpClientFactory.CreateClient("orders");
 
-        return await client.GetJsonAsync<List<OrderWithStatus>>($"orders/{authState.User.Identity.Name}");
+        return await client.GetJsonAsync<List<OrderWithStatus>>($"orders/user/{authState.User.Identity.Name}");
     }
 }
