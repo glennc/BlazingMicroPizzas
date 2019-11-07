@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BlazingPizza.Web
 {
-    //TODO: Sort out JSON Options
+    //TODO: Sort out JSON Options. Presumably want to use the same stuff MVC would want.
     public static class HttpClientExtensions
     {
         public static async Task<T> GetJsonAsync<T>(this HttpClient client, string uri)

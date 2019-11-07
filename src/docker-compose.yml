@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./BlazingPizza.Web/Dockerfile
+    image: blazingreg.azurecr.io/blazingpizzaweb
     depends_on:
       - orders
       - menu
@@ -22,6 +23,7 @@ services:
     build:
       context: .
       dockerfile: ./BlazingPizza.Orders/Dockerfile
+    image: blazingreg.azurecr.io/blazingpizzaorders
     networks:
       - backend
     expose:
@@ -38,6 +40,7 @@ services:
     build:
       context: .
       dockerfile: ./BlazingPizza.Menu/Dockerfile
+    image: blazingreg.azurecr.io/blazingpizzamenu
     networks:
       - backend
     expose:
