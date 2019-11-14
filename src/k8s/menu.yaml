@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: menu
+spec:
+  selector:
+    app: blazingpizza
+    tier: backend
+    role: menu
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: menu
+spec:
+  selector:
+    matchLabels:
+      app: blazingpizza
+      tier: backend
+      role: menu
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: blazingpizza
+        tier: backend
+        role: menu
+    spec:
+      containers:
+        - name: menu
+          image: "blazingreg.azurecr.io/blazingpizzamenu"
+          ports:
+            - name: http
+              containerPort: 80

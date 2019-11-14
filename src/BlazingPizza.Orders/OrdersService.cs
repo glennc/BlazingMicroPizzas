@@ -14,7 +14,6 @@ namespace BlazingPizza.Orders
 
         public OrdersService(IConfiguration configuration)
         {
-            Console.WriteLine($"Conn: {_configuration["Data:Connection"]}");
             _configuration = configuration;
             var client = new MongoClient(_configuration["Data:Connection"]);
             var database = client.GetDatabase(_configuration["Data:Database"]);

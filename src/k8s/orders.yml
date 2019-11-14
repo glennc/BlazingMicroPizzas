@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+spec:
+  selector:
+    app: blazingpizza
+    tier: backend
+    role: orders
+  ports:
+  - protocol: TCP
+    port: 5555
+    targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders
+spec:
+  selector:
+    matchLabels:
+      app: blazingpizza
+      tier: backend
+      role: orders
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: blazingpizza
+        tier: backend
+        role: orders
+    spec:
+      containers:
+        - name: orders
+          image: "blazingreg.azurecr.io/blazingpizzaorders"
+          ports:
+            - name: http
+              containerPort: 5555
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: config-volume
+            mountPath: /config
+      volumes:
+      - name: config-volume
+        secret:
+          secretName:
+            orders-secrets

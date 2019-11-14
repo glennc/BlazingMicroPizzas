@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
@@ -55,10 +56,10 @@ namespace BlazingPizza.Web
                       options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                   })
                   .AddCookie()
-                  .AddTwitter(twitterOptions =>
+                  .AddMicrosoftAccount(options =>
                   {
-                      twitterOptions.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
-                      twitterOptions.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
+                      options.ClientId = Configuration["Authentication:Twitter:ConsumerKey"];
+                      options.ClientSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
                   });
 
             services.AddServerSideBlazor();
@@ -75,20 +76,26 @@ namespace BlazingPizza.Web
                 client.DefaultRequestVersion = HttpVersion.Version20;
             });
 
-            services.AddHttpClient("auth", client =>
-            {
-                client.BaseAddress = new Uri(Configuration["Services:Auth"]);
-            });
-
             services.AddGrpcClient<OrderStatusClient>(c =>
             {
                 c.Address = new Uri(Configuration["Services:Orders"]);
+            });
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                //TODO: This should be configuration from the cluster telling the app what
+                //IP ranges are possible for proxies in the cluster.
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
             app.UseResponseCompression();
 
             if (env.IsDevelopment())
