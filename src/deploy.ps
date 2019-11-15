@@ -1,0 +1,8 @@
+docker-compose build
+docker-compose push
+kubectl scale deployment web --replicas=0
+kubectl scale deployment menu --replicas=0
+kubectl scale deployment orders --replicas=0
+kubectl scale deployment web --replicas=1
+kubectl scale deployment menu --replicas=1
+kubectl scale deployment orders --replicas=1
