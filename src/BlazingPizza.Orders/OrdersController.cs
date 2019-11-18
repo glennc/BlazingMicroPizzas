@@ -49,6 +49,7 @@ namespace BlazingPizza.Orders
             order.OrderId = Guid.NewGuid();
             order.TotalPrice = order.GetFormattedTotalPrice();
             await _db.SaveOrder(order);
+            OrdersEventSource.Log.OrderCreated();
             return order.OrderId;
         }
     }

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.ApplicationInsights.Extensibility.EventCounterCollector;
 
 namespace BlazingPizza.Orders
 {
@@ -31,6 +32,11 @@ namespace BlazingPizza.Orders
             services.AddControllers();
             services.AddGrpc();
             services.AddApplicationInsightsTelemetry(Configuration);
+
+            services.ConfigureTelemetryModule<EventCounterCollectionModule>((module, options) =>
+            {
+                module.Counters.Add(new EventCounterCollectionRequest("BlazingOrders.Pizza", "total-orders"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
