@@ -30,7 +30,7 @@ namespace BlazingPizza.Orders
         {
             if (command.Command == EventCommand.Enable)
             {
-                _totalOrdersCounter ??= new PollingCounter("total-orders", this, () => Volatile.Read(ref _totalOrders))
+                _totalOrdersCounter ??= new PollingCounter("total-orders", this, () => Interlocked.Read(ref _totalOrders))
                 {
                     DisplayName = "Total Orders"
                 };
