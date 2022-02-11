@@ -14,7 +14,7 @@
   <ItemGroup>
    <PackageReference Include="MongoDB.Driver" Version="2.9.2" />
    <ProjectReference Include="..\BlazingPizza.Shared\BlazingPizza.Shared.csproj" />
-   <PackageReference Include="Google.Protobuf" Version="3.9.1" />
+   <PackageReference Include="Google.Protobuf" Version="3.15.0" />
    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.23.2" />
    <PackageReference Include="Grpc.Tools" Version="2.23.0">
      <PrivateAssets>all</PrivateAssets>
